@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+
+  # 1. Base de données PostgreSQL (Cellar)
+  cellar:
+    image: postgres:16-alpine
+    container_name: cellar
+    environment:
+      POSTGRES_USER: dragon_user
+      POSTGRES_PASSWORD: dragon_password
+      POSTGRES_DB: dragon_db
+    volumes:
+      - cellar_data:/var/lib/postgresql/data
+
+  # 2. API Backend Node.js (Innkeeper)
+  innkeeper:
+    build:
+      context: ./innkeeper
+      dockerfile: Dockerfile
+    container_name: innkeeper
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=postgres://dragon_user:dragon_password@cellar:5432/dragon_db
+      - PORT=4181
+    depends_on:
+      - cellar
+
+  # 3. Frontend React servi par Nginx (Board)
+  board:
+    build:
+      context: ./board
+      dockerfile: Dockerfile
+    container_name: board
+    depends_on:
+      - innkeeper
+
+  # 4. Reverse Proxy Global (Gatekeeper)
+  gatekeeper:
+    image: nginx:1.25-alpine
+    container_name: gatekeeper
+    ports:
+      - "80:80" 
+    volumes:
+      - ./gatekeeper/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - board
+      - innkeeper
+
+volumes:
+  cellar_data: 
