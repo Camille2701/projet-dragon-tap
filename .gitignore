@@ -4,10 +4,10 @@
 node_modules/
 /innkeeper-java/target/*
 
-Dockerfile
+
 .dockerignore
-docker-compose.yml
 
 /repomix-output.md
 CLAUDE*
 .claude
+.DS_Store

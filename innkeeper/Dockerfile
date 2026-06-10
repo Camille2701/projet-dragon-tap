@@ -6,7 +6,7 @@ WORKDIR /usr/src/app
 
 COPY package*.json ./
 
-RUN npm ci --only=production
+RUN npm install --only=production
 
 COPY . .
 
@@ -14,4 +14,4 @@ USER node
 
 EXPOSE 4181
 
-CMD ["node", "index.js"]
+CMD ["node", "src/index.js"]

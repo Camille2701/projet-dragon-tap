@@ -4,11 +4,11 @@ WORKDIR /app
 
 COPY package*.json ./
 
-RUN npm ci
+RUN npm install --legacy-peer-deps
 
 COPY . .
 
-RUN npm run build
+RUN npx vite build
 
 FROM nginx:1.25-alpine
 
